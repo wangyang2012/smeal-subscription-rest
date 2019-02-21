@@ -26,7 +26,6 @@ public class SubscriptionResource {
     private SubscriptionService subService;
 
     @PostMapping(value = "/create")
-    @ResponseBody
     public String craeteSubscription(@RequestBody List<KeyValue> form) {
         Map<String, String> map = new HashMap<>();
         for (KeyValue keyValue : form) {
