@@ -32,7 +32,8 @@
 	</head>
 	<body>
 		<div class="form-container">
-			<form action="http://localhost:8080/subscription/create" method="post" enctype="application/json" id="payment-form">
+			<!--<form action="http://localhost:8080/subscription/create" method="post" enctype="application/json" id="payment-form">-->
+			<form action="http://54.38.189.20:8080/subscription/create" method="post" enctype="application/json" id="payment-form">
 			  <div class="form-row">
 				<label for="card-element">
 				  Credit or debit card
@@ -143,7 +144,7 @@
 				console.log(formData);
 				$.ajax({
 				  type: "POST",
-				  url: "http://localhost:8080/subscription/create",
+				  url: "http://54.38.189.20:8080/subscription/create",
 				  data: formData,
 				  success: function(){
 					console.log("ok ok ok ");
