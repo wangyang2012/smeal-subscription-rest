@@ -25,14 +25,36 @@ public class SubscriptionResource {
     @Autowired
     private SubscriptionService subService;
 
-    @PostMapping(value = "/create")
-    public String craeteSubscription(@RequestBody List<KeyValue> form) {
-        Map<String, String> map = new HashMap<>();
-        for (KeyValue keyValue : form) {
-            map.put(keyValue.getName(), keyValue.getValue());
-        }
+//    @PostMapping(value = "/create")
+//    public String craeteSubscription(@RequestBody List<KeyValue> form) {
+//        Map<String, String> map = new HashMap<>();
+//        for (KeyValue keyValue : form) {
+//            map.put(keyValue.getName(), keyValue.getValue());
+//        }
+//
+//        System.out.println(form.get(0).getValue());
+//        try {
+//            Customer customer = subService.createCustomer(map);
+//            Product prod = subService.createProduct(map);
+//            Plan plan = subService.createPlan(prod, map);
+//            Subscription subscription = subService.createSubscription(customer, plan, map);
+//            System.out.println("Subscription created: " + subscription.getId());
+//        } catch (StripeException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return "ok";
+//    }
 
-        System.out.println(form.get(0).getValue());
+    @PostMapping(value = "/create")
+    public KeyValue craeteSubscription(@RequestBody String token) {
+        Map<String, String> map = new HashMap<>();
+        map.put("email", "test@smeal.fr");
+        map.put("username", "yang");
+        map.put("stripeToken", token);
+        map.put("product-name", "produit de test");
+        map.put("product-price", "666");
+
         try {
             Customer customer = subService.createCustomer(map);
             Product prod = subService.createProduct(map);
@@ -43,11 +65,14 @@ public class SubscriptionResource {
             e.printStackTrace();
         }
 
-        return "ok";
+        KeyValue keyValue = new KeyValue();
+        keyValue.setName("response");
+        keyValue.setValue("ok");
+        return keyValue;
     }
 //
 //    @RequestMapping(value = { "/api/pojo/edit" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 //    @ResponseBody
 //    public Boolean editWinner( @RequestBody Pojo pojo) {
 //    }
-}
+                }
