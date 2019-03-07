@@ -16,6 +16,11 @@ public class CartServiceImpl implements CartService {
         String url = "https://www.smeal.fr/api/carts/" + cartId + "?ws_key=9IY4WY4Z4W12C5B4K38CC2X7G8NGGEK2";
         try {
             String cartStr = NetworkUtil.sendGet(url);
+            cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
+            cartStr = cartStr.replaceAll("</prestashop>", "");
+            cartStr = cartStr.replaceAll("<!\\[CDATA\\[", "");
+            cartStr = cartStr.replaceAll("]]>", "");
+
             return cartStr;
         } catch (Exception e) {
             e.printStackTrace();
