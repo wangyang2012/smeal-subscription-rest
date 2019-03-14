@@ -1,5 +1,6 @@
 package fr.smeal.subscription.resource;
 
+import fr.smeal.subscription.model.Cart;
 import fr.smeal.subscription.model.KeyValue;
 import fr.smeal.subscription.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,8 @@ public class CartResource {
     private CartService cartService;
 
     @GetMapping(value="/{cartId}")
-    public KeyValue getCart(@PathVariable Integer cartId) {
-        String cart = cartService.getCart(cartId);
-        KeyValue keyValue = new KeyValue();
-        keyValue.setName("response");
-        keyValue.setValue(cart);
-        return keyValue;
+    public Cart getCart(@PathVariable Integer cartId) {
+        Cart cart = cartService.getCart(cartId);
+        return cart;
     }
 }

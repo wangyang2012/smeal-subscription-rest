@@ -1,5 +1,6 @@
 package fr.smeal.subscription.resource;
 
+import fr.smeal.subscription.model.Customer;
 import fr.smeal.subscription.model.KeyValue;
 import fr.smeal.subscription.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,12 @@ public class CustomerResource {
     private CustomerService customerService;
 
     @GetMapping(value="/{customerId}")
-    public KeyValue getCustomer(@PathVariable Integer customerId) {
-        String customer = customerService.getCustomer(customerId);
-        KeyValue keyValue = new KeyValue();
-        keyValue.setName("response");
-        keyValue.setValue(customer);
-        return keyValue;
+    public Customer getCustomer(@PathVariable Integer customerId) {
+        Customer customer = customerService.getCustomer(customerId);
+        return customer;
+//        KeyValue keyValue = new KeyValue();
+//        keyValue.setName("response");
+//        keyValue.setValue(customer);
+//        return keyValue;
     }
 }

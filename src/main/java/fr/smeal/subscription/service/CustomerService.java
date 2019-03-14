@@ -1,5 +1,7 @@
 package fr.smeal.subscription.service;
 
+import fr.smeal.subscription.model.Customer;
+
 public interface CustomerService {
-    String getCustomer(Integer customerId);
+    Customer getCustomer(Integer customerId);
 }

@@ -1,7 +1,7 @@
 package fr.smeal.subscription.service;
 
-import fr.smeal.subscription.dto.CartDTO;
+import fr.smeal.subscription.model.Cart;
 
 public interface CartService {
-    String getCart(Integer cartId);
+    Cart getCart(Integer cartId);
 }
