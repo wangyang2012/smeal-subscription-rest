@@ -47,13 +47,13 @@ public class SubscriptionResource {
 //    }
 
     @PostMapping(value = "/create")
-    public KeyValue craeteSubscription(@RequestBody String token) {
+    public KeyValue craeteSubscription(@RequestBody Map<String, String> form) {
         Map<String, String> map = new HashMap<>();
-        map.put("email", "test@smeal.fr");
-        map.put("username", "yang");
-        map.put("stripeToken", token);
-        map.put("product-name", "produit de test");
-        map.put("product-price", "666");
+        map.put("email", form.get("email"));
+        map.put("username", form.get("userName"));
+        map.put("stripeToken", form.get("stripeToken"));
+        map.put("product-name", form.get("productName"));
+        map.put("product-price", form.get("productPrice"));
 
         try {
             Customer customer = subService.createCustomer(map);
@@ -70,9 +70,4 @@ public class SubscriptionResource {
         keyValue.setValue("ok");
         return keyValue;
     }
-//
-//    @RequestMapping(value = { "/api/pojo/edit" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-//    @ResponseBody
-//    public Boolean editWinner( @RequestBody Pojo pojo) {
-//    }
-                }
+}

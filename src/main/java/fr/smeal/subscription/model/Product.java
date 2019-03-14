@@ -6,6 +6,7 @@ public class Product {
     private Integer id;
     private String reference;
     private BigDecimal priceHt;
+    private BigDecimal priceTtc;
     private Integer taxRule;
 
     public Integer getId() {
@@ -38,5 +39,13 @@ public class Product {
 
     public void setTaxRule(Integer taxRule) {
         this.taxRule = taxRule;
+    }
+
+    public BigDecimal getPriceTtc() {
+        return priceTtc;
+    }
+
+    public void setPriceTtc(BigDecimal priceTtc) {
+        this.priceTtc = priceTtc;
     }
 }
