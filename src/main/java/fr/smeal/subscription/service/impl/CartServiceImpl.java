@@ -69,7 +69,33 @@ public class CartServiceImpl implements CartService {
 
             cartStr = cartStr.replaceAll("<subscription>0</subscription>", "<subscription>1</subscription>");
 
-            NetworkUtil.
+            NetworkUtil.sendPut(url, cartStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Change subscription from 1 to 0
+     *  <subscription>
+     <![CDATA[ 0 ]]>
+     </subscription>
+     * @param cartId
+     */
+    @Override
+    void unsubscriptCart(Integer cartId) {
+
+        String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
+        try {
+            String cartStr = NetworkUtil.sendGet(url);
+            cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
+            cartStr = cartStr.replaceAll("</prestashop>", "");
+            cartStr = cartStr.replaceAll("<!\\[CDATA\\[", "");
+            cartStr = cartStr.replaceAll("]]>", "");
+
+            cartStr = cartStr.replaceAll("<subscription>1</subscription>", "<subscription>0</subscription>");
+
+            NetworkUtil.sendPut(url, cartStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
