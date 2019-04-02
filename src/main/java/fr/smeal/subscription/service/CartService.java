@@ -4,4 +4,5 @@ import fr.smeal.subscription.model.Cart;
 
 public interface CartService {
     Cart getCart(Integer cartId);
+    void subscriptCart(Integer cartId);
 }

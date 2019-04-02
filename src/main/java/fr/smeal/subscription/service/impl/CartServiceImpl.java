@@ -4,6 +4,7 @@ import fr.smeal.subscription.model.Cart;
 import fr.smeal.subscription.model.Product;
 import fr.smeal.subscription.service.CartService;
 import fr.smeal.subscription.util.NetworkUtil;
+import fr.smeal.subscription.util.ParameterUtil;
 import fr.smeal.subscription.util.XmlUtil;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart getCart(Integer cartId) {
 
-        String url = "https://www.smeal.fr/api/carts/" + cartId + "?ws_key=9IY4WY4Z4W12C5B4K38CC2X7G8NGGEK2";
+        String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
         try {
             String cartStr = NetworkUtil.sendGet(url);
             cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
@@ -48,9 +49,35 @@ public class CartServiceImpl implements CartService {
         return null;
     }
 
+    /**
+     * Change subscription from 0 to 1
+     *  <subscription>
+            <![CDATA[ 0 ]]>
+        </subscription>
+     * @param cartId
+     */
+    @Override
+    void subscriptCart(Integer cartId) {
+
+        String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
+        try {
+            String cartStr = NetworkUtil.sendGet(url);
+            cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
+            cartStr = cartStr.replaceAll("</prestashop>", "");
+            cartStr = cartStr.replaceAll("<!\\[CDATA\\[", "");
+            cartStr = cartStr.replaceAll("]]>", "");
+
+            cartStr = cartStr.replaceAll("<subscription>0</subscription>", "<subscription>1</subscription>");
+
+            NetworkUtil.
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public Product getProduct(String productId) {
 
-        String url = "https://www.smeal.fr/api/products/" + productId + "?ws_key=9IY4WY4Z4W12C5B4K38CC2X7G8NGGEK2";
+        String url = ParameterUtil.getSmealApiUrl("/products/" + productId);
         try {
             String productStr = NetworkUtil.sendGet(url);
             productStr = productStr.substring(productStr.indexOf("<product>"));
