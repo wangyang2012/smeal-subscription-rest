@@ -3,6 +3,7 @@ package fr.smeal.subscription.service.impl;
 import fr.smeal.subscription.model.Customer;
 import fr.smeal.subscription.service.CustomerService;
 import fr.smeal.subscription.util.NetworkUtil;
+import fr.smeal.subscription.util.ParameterUtil;
 import fr.smeal.subscription.util.XmlUtil;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer getCustomer(Integer customerId) {
 
-        String url = "https://www.smeal.fr/api/customers/" + customerId + "?ws_key=9IY4WY4Z4W12C5B4K38CC2X7G8NGGEK2";
+        String url = ParameterUtil.getSmealApiUrl("/customers/" + customerId);
         try {
             String customerStr = NetworkUtil.sendGet(url);
 

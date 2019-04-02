@@ -7,6 +7,7 @@ import com.stripe.model.Plan;
 import com.stripe.model.Product;
 import com.stripe.model.Subscription;
 import fr.smeal.subscription.service.SubscriptionService;
+import fr.smeal.subscription.util.ParameterUtil;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public Customer createCustomer(Map<String, String> parameters) throws StripeException {
-        Stripe.apiKey = "sk_test_xV8hH1378GxwxL8MAGOpzxN3";
+        Stripe.apiKey = ParameterUtil.stripApiKey;
 
         Map<String, Object> customerParams = new HashMap<String, Object>();
         customerParams.put("email", parameters.get("email"));
@@ -32,7 +33,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public Product createProduct(Map<String, String> parameters) throws StripeException {
         // Set your secret key: remember to change this to your live secret key in production
         // See your keys here: https://dashboard.stripe.com/account/apikeys
-        Stripe.apiKey = "sk_test_xV8hH1378GxwxL8MAGOpzxN3";
+        Stripe.apiKey = ParameterUtil.stripApiKey;
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", parameters.get("product-name"));
@@ -43,7 +44,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public Plan createPlan(Product product, Map<String, String> parameters) throws StripeException {
-        Stripe.apiKey = "sk_test_xV8hH1378GxwxL8MAGOpzxN3";
+        Stripe.apiKey = ParameterUtil.stripApiKey;
 
         Map<String, Object> params = new HashMap<>();
         params.put("currency", "eur");
@@ -56,7 +57,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public Subscription createSubscription(Customer customer, Plan plan, Map<String, String> parameters) throws StripeException {
-        Stripe.apiKey = "sk_test_xV8hH1378GxwxL8MAGOpzxN3";
+        Stripe.apiKey = ParameterUtil.stripApiKey;
 
         Map<String, Object> item = new HashMap<>();
         item.put("plan", plan.getId());
