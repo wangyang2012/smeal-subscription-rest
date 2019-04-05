@@ -1,11 +1,15 @@
 package fr.smeal.subscription.service.impl;
 
+import fr.smeal.subscription.dao.CartCouponRepository;
 import fr.smeal.subscription.model.Cart;
+import fr.smeal.subscription.model.CartCoupon;
+import fr.smeal.subscription.model.CartCouponPk;
 import fr.smeal.subscription.model.Product;
 import fr.smeal.subscription.service.CartService;
 import fr.smeal.subscription.util.NetworkUtil;
 import fr.smeal.subscription.util.ParameterUtil;
 import fr.smeal.subscription.util.XmlUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +19,9 @@ import java.util.List;
 @Service("cartService")
 @Transactional
 public class CartServiceImpl implements CartService {
+
+    @Autowired
+    private CartCouponRepository cartCouponRepository;
 
     @Override
     public Cart getCart(Integer cartId) {
@@ -57,8 +64,7 @@ public class CartServiceImpl implements CartService {
      * @param cartId
      */
     @Override
-    void subscriptCart(Integer cartId) {
-
+    public void subscriptCart(Integer cartId) {
         String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
         try {
             String cartStr = NetworkUtil.sendGet(url);
@@ -68,11 +74,21 @@ public class CartServiceImpl implements CartService {
             cartStr = cartStr.replaceAll("]]>", "");
 
             cartStr = cartStr.replaceAll("<subscription>0</subscription>", "<subscription>1</subscription>");
+            this.addCouponToCart(cartId, 1);
 
-            NetworkUtil.sendPut(url, cartStr);
+            NetworkUtil.sendPut(url, "<prestashop>"+cartStr+"</prestashop>");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void addCouponToCart(Integer cartId, Integer couponId) {
+        CartCoupon cartCoupon = new CartCoupon();
+        CartCouponPk id = new CartCouponPk();
+        id.setIdCart(cartId);
+        id.setIdCoupon(couponId);
+        cartCoupon.setId(id);
+        cartCouponRepository.save(cartCoupon);
     }
 
     /**
@@ -83,7 +99,7 @@ public class CartServiceImpl implements CartService {
      * @param cartId
      */
     @Override
-    void unsubscriptCart(Integer cartId) {
+    public void unsubscriptCart(Integer cartId) {
 
         String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
         try {

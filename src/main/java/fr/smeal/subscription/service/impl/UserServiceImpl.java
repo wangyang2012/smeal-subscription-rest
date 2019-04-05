@@ -12,11 +12,12 @@ import javax.transaction.Transactional;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepo;
+//    @Autowired
+//    private UserRepository userRepo;
 
     @Override
     public Iterable<User> findAll() {
-        return userRepo.findAll();
+//        return userRepo.findAll();
+        return null;
     }
 }
