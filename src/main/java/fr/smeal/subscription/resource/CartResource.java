@@ -19,4 +19,16 @@ public class CartResource {
         Cart cart = cartService.getCart(cartId);
         return cart;
     }
+
+    @GetMapping(value="/subscription/{cartId}")
+    public String subscriptionCart(@PathVariable Integer cartId) {
+        cartService.subscriptCart(cartId);
+        return "OK";
+    }
+
+    @GetMapping(value="/unsubscription/{cartId}")
+    public String unsubscriptionCart(@PathVariable Integer cartId) {
+        cartService.unsubscriptCart(cartId);
+        return "OK";
+    }
 }

@@ -25,26 +25,6 @@ public class SubscriptionResource {
     @Autowired
     private SubscriptionService subService;
 
-//    @PostMapping(value = "/create")
-//    public String craeteSubscription(@RequestBody List<KeyValue> form) {
-//        Map<String, String> map = new HashMap<>();
-//        for (KeyValue keyValue : form) {
-//            map.put(keyValue.getName(), keyValue.getValue());
-//        }
-//
-//        System.out.println(form.get(0).getValue());
-//        try {
-//            Customer customer = subService.createCustomer(map);
-//            Product prod = subService.createProduct(map);
-//            Plan plan = subService.createPlan(prod, map);
-//            Subscription subscription = subService.createSubscription(customer, plan, map);
-//            System.out.println("Subscription created: " + subscription.getId());
-//        } catch (StripeException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return "ok";
-//    }
 
     @PostMapping(value = "/create")
     public KeyValue craeteSubscription(@RequestBody Map<String, String> form) {

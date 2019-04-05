@@ -1,10 +1,15 @@
 package fr.smeal.subscription.service.impl;
 
+import fr.smeal.subscription.dao.CartCouponRepository;
 import fr.smeal.subscription.model.Cart;
+import fr.smeal.subscription.model.CartCoupon;
+import fr.smeal.subscription.model.CartCouponPk;
 import fr.smeal.subscription.model.Product;
 import fr.smeal.subscription.service.CartService;
 import fr.smeal.subscription.util.NetworkUtil;
+import fr.smeal.subscription.util.ParameterUtil;
 import fr.smeal.subscription.util.XmlUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,10 +20,13 @@ import java.util.List;
 @Transactional
 public class CartServiceImpl implements CartService {
 
+    @Autowired
+    private CartCouponRepository cartCouponRepository;
+
     @Override
     public Cart getCart(Integer cartId) {
 
-        String url = "https://www.smeal.fr/api/carts/" + cartId + "?ws_key=9IY4WY4Z4W12C5B4K38CC2X7G8NGGEK2";
+        String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
         try {
             String cartStr = NetworkUtil.sendGet(url);
             cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
@@ -48,9 +56,70 @@ public class CartServiceImpl implements CartService {
         return null;
     }
 
+    /**
+     * Change subscription from 0 to 1
+     *  <subscription>
+            <![CDATA[ 0 ]]>
+        </subscription>
+     * @param cartId
+     */
+    @Override
+    public void subscriptCart(Integer cartId) {
+        String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
+        try {
+            String cartStr = NetworkUtil.sendGet(url);
+            cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
+            cartStr = cartStr.replaceAll("</prestashop>", "");
+            cartStr = cartStr.replaceAll("<!\\[CDATA\\[", "");
+            cartStr = cartStr.replaceAll("]]>", "");
+
+            cartStr = cartStr.replaceAll("<subscription>0</subscription>", "<subscription>1</subscription>");
+            this.addCouponToCart(cartId, 1);
+
+            NetworkUtil.sendPut(url, "<prestashop>"+cartStr+"</prestashop>");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addCouponToCart(Integer cartId, Integer couponId) {
+        CartCoupon cartCoupon = new CartCoupon();
+        CartCouponPk id = new CartCouponPk();
+        id.setIdCart(cartId);
+        id.setIdCoupon(couponId);
+        cartCoupon.setId(id);
+        cartCouponRepository.save(cartCoupon);
+    }
+
+    /**
+     * Change subscription from 1 to 0
+     *  <subscription>
+     <![CDATA[ 0 ]]>
+     </subscription>
+     * @param cartId
+     */
+    @Override
+    public void unsubscriptCart(Integer cartId) {
+
+        String url = ParameterUtil.getSmealApiUrl("/carts/" + cartId);
+        try {
+            String cartStr = NetworkUtil.sendGet(url);
+            cartStr = cartStr.substring(cartStr.indexOf("<cart>"));
+            cartStr = cartStr.replaceAll("</prestashop>", "");
+            cartStr = cartStr.replaceAll("<!\\[CDATA\\[", "");
+            cartStr = cartStr.replaceAll("]]>", "");
+
+            cartStr = cartStr.replaceAll("<subscription>1</subscription>", "<subscription>0</subscription>");
+
+            NetworkUtil.sendPut(url, cartStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public Product getProduct(String productId) {
 
-        String url = "https://www.smeal.fr/api/products/" + productId + "?ws_key=9IY4WY4Z4W12C5B4K38CC2X7G8NGGEK2";
+        String url = ParameterUtil.getSmealApiUrl("/products/" + productId);
         try {
             String productStr = NetworkUtil.sendGet(url);
             productStr = productStr.substring(productStr.indexOf("<product>"));
