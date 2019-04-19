@@ -6,6 +6,7 @@ import fr.smeal.subscription.util.NetworkUtil;
 import fr.smeal.subscription.util.ParameterUtil;
 import fr.smeal.subscription.util.XmlUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 
@@ -14,7 +15,10 @@ import javax.transaction.Transactional;
 public class CustomerServiceImpl implements CustomerService {
 
     @Override
-    public Customer getCustomer(Integer customerId) {
+    public Customer getCustomer(Integer customerId, String customerToken) {
+        if (customerId == null || StringUtils.isEmpty(customerToken)) {
+            return null;
+        }
 
         String url = ParameterUtil.getSmealApiUrl("/customers/" + customerId);
         try {
@@ -31,6 +35,13 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setLastName(XmlUtil.getValue(customerStr, "lastname"));
             customer.setEmail(XmlUtil.getValue(customerStr, "email"));
             customer.setPassword(XmlUtil.getValue(customerStr, "passwd"));
+            // TODO: get city, address, zipCode
+            String secureKey = XmlUtil.getValue(customerStr, "secure_key");
+            customer.setToken(secureKey);
+            if (!customerToken.equals(secureKey)) {
+                return null;
+            }
+
             return customer;
         } catch (Exception e) {
             e.printStackTrace();
