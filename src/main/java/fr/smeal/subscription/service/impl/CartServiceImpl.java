@@ -41,9 +41,10 @@ public class CartServiceImpl implements CartService {
             BigDecimal totalTtc = new BigDecimal(0);
             for (String productStr : productsStr) {
                 String productId = XmlUtil.getValue(productStr, "id_product");
+                BigDecimal number = XmlUtil.getBigDecimalValue(productStr, "quantity");
                 if (productId != null) {
                     Product product = getProduct(productId);
-                    totalTtc = totalTtc.add(product.getPriceTtc());
+                    totalTtc = totalTtc.add(product.getPriceTtc().multiply(number));
                     cart.getProducts().add(product);
                 }
             }
@@ -132,7 +133,9 @@ public class CartServiceImpl implements CartService {
             product.setReference(XmlUtil.getValue(productStr, "reference"));
             product.setPriceHt(XmlUtil.getBigDecimalValue(productStr, "price"));
             BigDecimal tax = getTax(XmlUtil.getValue(productStr, "id_tax_rules_group"));
-            product.setPriceTtc(product.getPriceHt().multiply(tax));
+            BigDecimal prixHt = product.getPriceHt();
+            BigDecimal prixTtc = prixHt.add(prixHt.multiply(tax).divide(new BigDecimal(100)));
+            product.setPriceTtc(prixTtc);
             return product;
         } catch (Exception e) {
             e.printStackTrace();
