@@ -13,9 +13,9 @@ public class CustomerResource {
     @Autowired
     private CustomerService customerService;
 
-    @PutMapping(value="/{customerId}")
-    public Customer getCustomer(@PathVariable Integer customerId, @RequestBody String customerToken) {
-        Customer customer = customerService.getCustomer(customerId, customerToken);
+    @PutMapping(value="/{customerId}/cart/{cartId}")
+    public Customer getCustomer(@PathVariable Integer customerId, @PathVariable Integer cartId, @RequestBody String customerToken) {
+        Customer customer = customerService.getCustomer(customerId, customerToken, cartId);
         return customer;
     }
 }
