@@ -1,10 +1,13 @@
 package fr.smeal.subscription.service.impl;
 
+import fr.smeal.subscription.dao.CartRepository;
+import fr.smeal.subscription.entity.CartEntity;
 import fr.smeal.subscription.model.Customer;
 import fr.smeal.subscription.service.CustomerService;
 import fr.smeal.subscription.util.NetworkUtil;
 import fr.smeal.subscription.util.ParameterUtil;
 import fr.smeal.subscription.util.XmlUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,9 +17,17 @@ import javax.transaction.Transactional;
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
+    @Autowired
+    private CartRepository cartRepository;
+
     @Override
-    public Customer getCustomer(Integer customerId, String customerToken) {
+    public Customer getCustomer(Integer customerId, String customerToken, Integer cartId) {
         if (customerId == null || StringUtils.isEmpty(customerToken)) {
+            return null;
+        }
+
+        CartEntity cart = cartRepository.getById(cartId);
+        if (cart == null || !customerId.equals(cart.getIdCustomer())) {
             return null;
         }
 
