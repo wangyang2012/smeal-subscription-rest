@@ -48,7 +48,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Map<String, Object> params = new HashMap<>();
         params.put("currency", "eur");
-        params.put("interval", "month");
+        params.put("interval", "day");
+//        params.put("interval", "month");
         params.put("product", product.getId());
         params.put("nickname", "Prod Plan");
         params.put("amount", parameters.get("product-price").replaceAll("\\.", ""));
