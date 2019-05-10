@@ -15,7 +15,7 @@ public class StripeEventResource {
     private SubscriptionService subService;
 
 
-    @PutMapping(value = "/")
+    @PostMapping(value = "/")
     public ResponseEntity craeteSubscription(@RequestBody String request) {
         System.out.println(request);
         return ResponseEntity.ok(HttpStatus.OK);
