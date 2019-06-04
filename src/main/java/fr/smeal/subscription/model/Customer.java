@@ -1,8 +1,5 @@
 package fr.smeal.subscription.model;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 public class Customer {
     private Integer id;
     private String firstName;
