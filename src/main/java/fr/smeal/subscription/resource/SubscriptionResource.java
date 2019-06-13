@@ -34,6 +34,7 @@ public class SubscriptionResource {
         map.put("stripeToken", form.get("stripeToken"));
         map.put("product-name", form.get("productName"));
         map.put("product-price", form.get("productPrice"));
+        map.put("cart-id", "6");
 
         try {
             Customer customer = subService.createCustomer(map);

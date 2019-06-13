@@ -51,7 +51,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         params.put("interval", "day");
 //        params.put("interval", "month");
         params.put("product", product.getId());
-        params.put("nickname", "Prod Plan");
+        params.put("nickname", "cartId:" + parameters.get("cart-id"));
         params.put("amount", parameters.get("product-price").replaceAll("\\.", ""));
         return Plan.create(params);
     }
