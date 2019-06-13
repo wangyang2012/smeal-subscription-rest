@@ -22,6 +22,6 @@ public class MapUtilTest {
         map.put("address", mapAddress);
         MapUtil.displayMap(map, sb, null);
         System.out.println(sb.toString());
-        }
-        }
+    }
+}
 

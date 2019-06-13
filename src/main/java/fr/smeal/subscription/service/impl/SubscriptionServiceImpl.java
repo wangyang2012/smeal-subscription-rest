@@ -67,6 +67,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Map<String, Object> params = new HashMap<>();
         params.put("customer", customer.getId());
         params.put("items", items);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("cartId", parameters.get("cart-id"));
+        params.put("metadata", metadata);
         return Subscription.create(params);
     }
 }

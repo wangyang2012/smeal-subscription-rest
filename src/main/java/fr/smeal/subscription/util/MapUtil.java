@@ -1,5 +1,6 @@
 package fr.smeal.subscription.util;
 
+import java.util.List;
 import java.util.Map;
 
 public class MapUtil {
@@ -35,5 +36,14 @@ public class MapUtil {
         });
     }
 
+    public static Integer getCartIdFromMap(Map<Object, Object> map) {
+        Map<String, Object> mapObject = (Map<String, Object>) map.get("object");
+        Map<String, Object> lines = (Map<String, Object>) mapObject.get("lines");
+        List<Map<String, Object>> data = (List<Map<String, Object>>) lines.get("data");
+        Map<String, Object> firstData = data.get(0);
+        Map<String, Object> metadata = (Map<String, Object>) firstData.get("metadata");
+        Integer cartId = Integer.valueOf((String)metadata.get("cartId"));
+        return cartId;
+    }
 }
 
