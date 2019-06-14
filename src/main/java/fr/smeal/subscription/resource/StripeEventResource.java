@@ -30,13 +30,13 @@ public class StripeEventResource {
         Map<String, Object> mapObject = (Map<String, Object>) mapData.get("object");
 
 
-        if ("invoice.payment_succeeded".equals(mapObject.get("type"))) {
+        if ("invoice.payment_succeeded".equals(request.get("type"))) {
             // paiement réussi
             // TODO: create order in Smeal
             Integer cartId = MapUtil.getCartIdFromMap(mapObject);
             System.out.println("cartId: " + cartId);
 //             createCommandInSmeal();
-        } else if ("customer.source.expiring".equals(mapObject.get("type"))) {
+        } else if ("customer.source.expiring".equals(request.get("type"))) {
             // TODO: inform client when his card is expiring
             // creditCardExpiring();
         }
