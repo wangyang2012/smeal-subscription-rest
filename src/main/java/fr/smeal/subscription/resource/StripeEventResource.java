@@ -26,14 +26,14 @@ public class StripeEventResource {
         MapUtil.displayMap(request, sb, 0);
         System.out.println(sb.toString());
 
-
-        Map<String, Object> mapObject = (Map<String, Object>) request.get("object");
+        Map<String, Object> mapData = (Map<String, Object>) request.get("data");
+        Map<String, Object> mapObject = (Map<String, Object>) mapData.get("object");
 
 
         if ("invoice.payment_succeeded".equals(mapObject.get("type"))) {
             // paiement réussi
             // TODO: create order in Smeal
-            Integer cartId = MapUtil.getCartIdFromMap(request);
+            Integer cartId = MapUtil.getCartIdFromMap(mapObject);
             System.out.println("cartId: " + cartId);
 //             createCommandInSmeal();
         } else if ("customer.source.expiring".equals(mapObject.get("type"))) {
