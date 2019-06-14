@@ -1,12 +1,26 @@
 package fr.smeal.subscription.resource;
 
+import fr.smeal.subscription.dao.OrderDetailRepository;
+import fr.smeal.subscription.dao.ProductLangueRepository;
+import fr.smeal.subscription.dao.ProductRepository;
+import fr.smeal.subscription.entity.CartEntity;
+import fr.smeal.subscription.entity.CartProductEntity;
+import fr.smeal.subscription.entity.ProductEntity;
+import fr.smeal.subscription.model.Order;
+import fr.smeal.subscription.model.OrderDetail;
+import fr.smeal.subscription.service.CartService;
+import fr.smeal.subscription.service.OrderService;
 import fr.smeal.subscription.service.SubscriptionService;
+import fr.smeal.subscription.util.MailUtil;
 import fr.smeal.subscription.util.MapUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,31 +31,127 @@ public class StripeEventResource {
     @Autowired
     private SubscriptionService subService;
 
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ProductLangueRepository productLangueRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
 
     @PostMapping(value = "/")
     public ResponseEntity craeteSubscription(@RequestBody Map<Object, Object> request) {
 
+        // TODO: remove prints
         System.out.println("======================= " + request.get("type") + " =======================");
         StringBuilder sb = new StringBuilder();
         MapUtil.displayMap(request, sb, 0);
         System.out.println(sb.toString());
 
+        // TODO: test if mapData/mapObject are null
         Map<String, Object> mapData = (Map<String, Object>) request.get("data");
         Map<String, Object> mapObject = (Map<String, Object>) mapData.get("object");
 
-
         if ("invoice.payment_succeeded".equals(request.get("type"))) {
             // paiement réussi
-            // TODO: create order in Smeal
             Integer cartId = MapUtil.getCartIdFromMap(mapObject);
             System.out.println("cartId: " + cartId);
-//             createCommandInSmeal();
+            try {
+                createCommandInSmeal(cartId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if ("customer.source.expiring".equals(request.get("type"))) {
             // TODO: inform client when his card is expiring
             // creditCardExpiring();
         }
 
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PostMapping(value="/test")
+    public String test(@RequestBody Map<Object, Object> request) {
+        try {
+            createCommandInSmeal(6);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "OK";
+    }
+
+
+    private void createCommandInSmeal(Integer cartId) throws Exception {
+        CartEntity cartEntity = cartService.getCartEntity(cartId);
+        Order order = new Order();
+        order.setReference("SUBS");
+        order.setIdShop(cartEntity.getIdShop());
+        if (cartEntity.getIdAddressDelivery() == null || cartEntity.getIdAddressInvoice() == null || cartEntity.getIdAddressInvoice() == 0 || cartEntity.getIdAddressDelivery() == 0) {
+            throw new Exception("Adresse Delivery or Address Invoice cannot be 0");
+        }
+        order.setIdAddressInvoice(cartEntity.getIdAddressInvoice());
+        order.setIdAddressDelivery(cartEntity.getIdAddressDelivery());
+        order.setIdCustomer(cartEntity.getIdCustomer());
+        order.setIdLang(cartEntity.getIdLang());
+        order.setIdCurrency(cartEntity.getIdCurrency());
+        order.setDateAdd(new Date());
+        order.setDateUpdate(new Date());
+        order.setConversionRate(new BigDecimal(1));
+        order.setCurrentState(2);
+        order.setDeliveryDate(new Date());
+        order.setGift(false);
+        order.setIdCarrier(cartEntity.getIdCarrier());
+        order.setIdCart(cartId);
+        order.setInvoiceDate(new Date());
+        order.setValid(true);
+        order.setPaiyment("CB avec Stripe");
+        order.setRecyclable(false);
+        // TODO: total to calcul
+        order.setTotalPaid(new BigDecimal(100));
+        order.setTotalPaidTaxIncluded(new BigDecimal(120));
+
+        order = orderService.save(order);
+
+        List<CartProductEntity> cartProducts = cartService.getCartProduct(cartId);
+        for (CartProductEntity cartProduct: cartProducts) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setIdOrder(order.getId());
+            orderDetail.setIdOrderInvoice(0);
+            orderDetail.setIdShop(cartProduct.getIdShop());
+            orderDetail.setIdProduct(cartProduct.getId().getIdProduct());
+            orderDetail.setIdProductAttribute(cartProduct.getIdProductAttribute());
+            orderDetail.setIdCustomization(cartProduct.getIdCustomization());
+
+            // get product details information
+            ProductEntity product = productRepository.getOne(cartProduct.getId().getIdProduct());
+            String productName = productLangueRepository.getNameByProductId(cartProduct.getId().getIdProduct());
+
+            orderDetail.setProductName(productName);
+            orderDetail.setProductQuantity(cartProduct.getQuantity());
+            orderDetail.setProductPrice(product.getPrice());
+            orderDetail.setOriginalProductPrice(product.getPrice());
+            orderDetail.setProductReference(product.getReference());
+
+            // TODO: calcul price with taxes
+            orderDetail.setTotalPriceTaxIncl(new BigDecimal(100));
+            orderDetail.setTotalPriceTaxExcl(new BigDecimal(90));
+            orderDetail.setUnitPriceTaxIncl(new BigDecimal(10));
+            orderDetail.setUnitPriceTaxExcl(new BigDecimal(9));
+
+            orderDetail.setProductWeight(new BigDecimal(0));
+            orderDetail.setTaxName("");
+
+            orderDetailRepository.save(orderDetail);
+        }
+
+        MailUtil.sendMail("wangyang1712@gmail.com", "Confirmation commande", "Félicitaion, votre commande a bien été créée.");
     }
 }
 

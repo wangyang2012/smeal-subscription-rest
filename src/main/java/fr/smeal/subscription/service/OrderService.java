@@ -4,4 +4,5 @@ import fr.smeal.subscription.model.Order;
 
 public interface OrderService {
     Order createOrder();
+    Order save(Order order);
 }

@@ -1,6 +1,10 @@
 package fr.smeal.subscription.service.impl;
 
 import fr.smeal.subscription.dao.CartCouponRepository;
+import fr.smeal.subscription.dao.CartProductRepository;
+import fr.smeal.subscription.dao.CartRepository;
+import fr.smeal.subscription.entity.CartEntity;
+import fr.smeal.subscription.entity.CartProductEntity;
 import fr.smeal.subscription.model.Cart;
 import fr.smeal.subscription.model.CartCoupon;
 import fr.smeal.subscription.model.CartCouponPk;
@@ -22,6 +26,12 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private CartCouponRepository cartCouponRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private CartProductRepository cartProductRepository;
 
     @Override
     public Cart getCart(Integer cartId) {
@@ -147,5 +157,15 @@ public class CartServiceImpl implements CartService {
     public BigDecimal getTax(String taxRulesGroupId) {
         // TODO: tax_rule_group => tax_rules + country => tax_id => tax
         return new BigDecimal(5.5f);
+    }
+
+    @Override
+    public CartEntity getCartEntity(Integer cartId) {
+        return cartRepository.getById(cartId);
+    }
+
+    @Override
+    public List<CartProductEntity> getCartProduct(Integer cartId) {
+        return cartProductRepository.findById_IdCart(cartId);
     }
 }

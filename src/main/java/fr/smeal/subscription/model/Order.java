@@ -17,6 +17,9 @@ public class Order {
     @Column(name="reference")
     private String reference;
 
+    @Column(name="id_shop")
+    private Integer idShop;
+
     @Column(name="id_carrier")
     private Integer idCarrier;
 
@@ -44,9 +47,6 @@ public class Order {
     @Column(name="payment")
     private String paiyment;
 
-    @Column(name="conversion_rate")
-    private BigDecimal conversionRate;
-
     @Column(name="recyclable")
     private Boolean recyclable;
 
@@ -65,14 +65,17 @@ public class Order {
     @Column(name="delivery_date")
     private Date deliveryDate;
 
-    @Column(name="date_add")
-    private Date dateAdd;
-
     @Column(name="date_upd")
     private Date dateUpdate;
 
     @Column(name="valid")
     private Boolean valid;
+
+    @Column(name="date_add")
+    private Date dateAdd;
+
+    @Column(name="conversion_rate")
+    private BigDecimal conversionRate;
 
     public Integer getId() {
         return id;
@@ -241,4 +244,13 @@ public class Order {
     public void setTotalPaidTaxIncluded(BigDecimal totalPaidTaxIncluded) {
         this.totalPaidTaxIncluded = totalPaidTaxIncluded;
     }
+
+    public Integer getIdShop() {
+        return idShop;
+    }
+
+    public void setIdShop(Integer idShop) {
+        this.idShop = idShop;
+    }
+
 }
